@@ -1,30 +1,19 @@
 #!/usr/bin/python3
-# This script prints the State object with the name passed as argument from the
-# database hbtn_0e_6_usa
-
-
-import sys
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
+"""inserts a State object into the database hbtn_0e_6_usa
+"""
+from sys import argv
 from model_state import Base, State
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-
-if __name__ == '__main__':
-    username = sys.argv[1]
-    password = sys.argv[2]
-    database_name = sys.argv[3]
-
-    eng = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'
-                        .format(username,
-                                password,
-                                database_name),
-                        pool_pre_ping=True)
-    Base.metadata.create_all(eng)
-    Session = sessionmaker(bind=eng)
-    session = Session()
-
-    new_state = State(name='Louisiana')
-    session.add(new_state)
+if __name__ == "__main__":
+    engine = create_engine(
+        "mysql://{}:{}@localhost:3306/{}".format(
+            argv[1], argv[2], argv[3]
+        )
+    )
+    session = sessionmaker(bind=engine)()
+    lou = State(name='Louisiana')
+    session.add(lou)
     session.commit()
-    print(new_state.id)
-    session.close()
+    print(lou.id)
